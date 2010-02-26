@@ -1,0 +1,120 @@
+/*
+ * zURL.ws website stylesheet
+ * (c) 2010 Daniel15 (http://dan.cx/)
+ */
+
+.errors
+{
+	background-color: #F0CCCC;
+	border: 1px solid #C00;
+	margin: 0.5em 0;
+}
+
+.errors p, p.errors
+{
+	padding: 0.5em;
+	margin: 0;
+}
+
+.errors p img
+{
+	vertical-align: middle;
+}
+
+p#top_message
+{
+	background-color: #EDF0CC;
+	border: 1px solid #BBCC00;
+	padding: 0.5em;
+}
+
+p#top_message img
+{
+	vertical-align: middle;
+}
+
+form br
+{
+	clear: left;
+}
+
+/* Shortening form */
+form#shorten
+{
+	background-color: #e6f0f0;
+	border: 2px solid #AAA;
+	border-radius: 1em;
+	-moz-border-radius: 1em;
+	-webkit-border-radius: 1em;
+	padding: 1em;
+}
+
+form#shorten input#url
+{
+	width: 90%;
+}
+
+form#shorten input#shorten
+{
+	width: 8%;
+}
+
+
+/* Registration Form */
+form#register label
+{
+	float: left;
+	width: 10em;
+	text-align: right;
+	padding-right: 0.3em;
+}
+
+form#register input
+{
+	margin-bottom: 0.2em;
+}
+
+/* Shortened */
+#copy_clipboard
+{
+	margin-left: 2em;
+	border: 1px solid black;
+	padding: 0.5em;
+	background-color: #DDD;
+}
+
+#copy_clipboard.hover
+{
+	background-color: white;
+}
+
+#copy_clipboard.active
+{
+	background-color: #AAA;
+}
+
+/* Form fields with no value entered */
+input.no-value
+{
+	color: #AAA;
+}
+
+/* Stuff that's hidden by default */
+div#shorten_another
+{
+	display: none;
+}
+
+.icon
+{
+	cursor: pointer;
+}
+
+/* Some table styles - Column widths */
+table
+{
+	margin-top: 1em;
+}
+th.date { width: 7em; }
+th.shorturl { width: 15.5em; }
+th.datetime { width: 13em; }

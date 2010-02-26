@@ -1,0 +1,259 @@
+/*
+ * zURL.ws layout stylesheet
+ * (c) 2010 Daniel15 (http://dan.cx/)
+ */
+ 
+body
+{
+	font-family: Verdana, sans-serif;
+	font-size: small;
+	margin: 0;
+	padding: 0;
+	background-color: white;
+	line-height: 1.5;
+}
+
+a
+{
+	color: blue;
+	text-decoration: none;
+}
+
+a:active
+{
+	position: relative;
+	left: 1px;
+	top: 1px;
+}
+
+a img
+{
+	border: none;
+}
+
+a:hover
+{
+	text-decoration: underline;	
+}
+
+p
+{
+	margin: 0.5em 0;
+}
+
+table
+{
+	width: 100%;
+	border-color: #12928d;
+	border-style: solid;
+	border-width: 1px 0 0 1px;
+}
+
+table td,
+table th
+{
+	border-color: #12928d; /*12928d*/
+	border-style: solid;
+	border-width: 0 1px 1px 0;
+	padding: 0.2em;
+}
+
+table thead
+{
+	background: #0A5250 url(nav.png);
+	color: white;
+}
+
+table tr:nth-child(even)
+{
+	background: /*#cfe2e2;*/ #e6f0f0;
+}
+
+div#container
+{
+	/*border: 4px solid #888;
+	margin: 1.5em;
+	background: white;*/
+	
+}
+
+div#header
+{
+	/*background: #317CB1 url(header.png);*/
+	background: #199e99 url(header.png);
+	position: relative;
+	padding: 0 1em 1.5em 1em;
+	color: white;
+}
+
+div#header a
+{
+	/*color: #90d1ff;*/
+	color: #82fcf8;
+}
+
+div#header h1
+{
+	margin: 0;
+	padding: 0.1em 0 0 0;
+	font: 2.5em "Trebuchet MS", Arial, sans-serif;
+	font-weight: bold;
+	text-shadow: 2px 2px 3px #093c3a;
+}
+
+div#header h1 a
+{
+	color: white;
+}
+
+div#header h1 a:hover
+{
+	text-decoration: none;
+}
+
+div#header h2
+{
+	margin: 0;
+	padding: 0.1em 0 0 0;
+	font: 1.5em "Trebuchet MS", Arial, sans-serif;
+	font-weight: bold;
+	text-shadow: 2px 2px 3px #0d5350;
+}
+
+ul#nav 
+{
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+	/*border-top: 1px solid #317CB1;
+	background: #0E609E url(nav.png);*/
+	border-top: 1px solid #12928d;
+	background: #199e99 url(nav.png);
+	width: 100%;
+	height: 2.5em;
+}
+
+ul#nav li
+{
+	display: inline-block;
+	height: 2.5em;
+	line-height: 2.5em;
+	/*border-right: 3px double #317CB1;*/
+	border-right: 3px double #12928d;
+}
+
+ul#nav li img
+{
+	vertical-align: middle;
+}
+
+ul#nav li a
+{
+	padding: 0 1.5em 0 1em;
+	color: white;
+	font: 1.1em "Trebuchet MS", Arial, sans-serif;
+	font-weight: bold;
+}
+
+ul#nav li a:hover
+{
+	text-decoration: none;
+}
+
+ul#nav li:hover
+{
+	color: black;
+}
+
+ul#nav li:hover a
+{
+	color: #EDF867;
+}
+
+/* Header login prompt */
+div#head_login
+{
+	float: right;
+	padding-top: 0.5em;
+}
+
+div#head_login p
+{
+	margin: 0;
+}
+
+form#head_login_form,
+form#head_login_form fieldset
+{
+	display: inline;
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+
+
+form#head_login_form
+{
+	display: none;
+}
+
+div#body
+{
+	padding: 0.1em 1em;
+}
+
+div#body h2,
+div#body h3
+{
+	color: #115280;
+	margin: 0.5em 0 0 0;
+}
+
+div#body h2
+{
+	border-bottom: 1px solid #1f97ec;
+}
+
+div#footer
+{
+	clear: both;
+	color: #888;
+	font-size: small;
+	border-top: 1px solid #999;
+	padding: 0.2em 0 0 0.5em;
+}
+
+/* Internet Explorer hacks/fixes below */
+.ie6 ul#nav li,
+.ie7 ul#nav li
+{
+	display: inline;
+}
+
+.ie6 p#head_login_prompt
+{
+	float: none;
+}
+
+/* Based on technique at http://www.alistapart.com/articles/holygrail/... <3 AListApart */
+/*body.has-sidebar div#container
+{
+	padding-right: 20em;
+}
+
+body.has-sidebar div#body
+{
+	position: relative;
+	float: left;
+	width: 100%;
+}
+
+body.has-sidebar div#sidebar
+{
+	position: relative;
+	float: left;
+	width: 17em;
+	padding-left: 0.5em;
+	margin-right: -20em;
+	border-left: 1px solid black;
+}*/
