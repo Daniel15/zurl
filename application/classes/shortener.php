@@ -52,12 +52,12 @@ class Shortener
 			$hostname = $_SERVER['HTTP_HOST'];
 			
 		// Is it a custom URL?
-		if (preg_match('~^c(\.dev|\.staging)?\.zurl~', $hostname))
+		if (preg_match('~^c(\.dev|\.staging|\.pre)?\.zurl~', $hostname))
 		{
 			return Model_Url::find_by_custom_alias($alias);
 		}
 		// Is it a user custom URL?
-		elseif (preg_match('~^([A-Za-z0-9\-_]+)(\.dev|\.staging)?.zurl~', $hostname, $matches) && $matches[1] != 'dev' && $matches[1] != 'staging')
+		elseif (preg_match('~^([A-Za-z0-9\-_]+)(\.dev|\.staging|\.pre)?.zurl~', $hostname, $matches) && $matches[1] != 'dev' && $matches[1] != 'staging' && $matches[1] != 'pre')
 		{
 			return Model_Url::find_by_user_alias($alias, $matches[1]);
 		}

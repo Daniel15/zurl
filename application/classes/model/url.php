@@ -83,6 +83,8 @@ class Model_Url extends ORM
 			$base = 'dev.zurl.ws:82';
 		elseif (strstr($_SERVER['HTTP_HOST'], 'staging.zurl'))
 			$base = 'staging.zurl.ws';
+		elseif (strstr($_SERVER['HTTP_HOST'], 'pre.zurl'))
+			$base = 'pre.zurl.ws';
 		else
 			$base = 'zurl.ws';
 			

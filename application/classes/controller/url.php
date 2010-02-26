@@ -13,7 +13,7 @@ class Controller_Url extends Controller_Template
 	public function action_index()
 	{
 		// Wrong domain? Redirect to the correct one.
-		if (!in_array($_SERVER['HTTP_HOST'], array('zurl.ws', 'www.zurl.ws', 'dev.zurl.ws', 'dev.zurl.ws:82')))
+		if (!in_array($_SERVER['HTTP_HOST'], array('zurl.ws', 'www.zurl.ws', 'dev.zurl.ws', 'dev.zurl.ws:82', 'staging.zurl.ws', 'pre.zurl.ws')))
 			$this->request->redirect('http://zurl.ws' . $_SERVER['REQUEST_URI']);
 			
 		$this->template->title = 'Welcome to zURL';
