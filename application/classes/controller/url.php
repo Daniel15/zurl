@@ -37,7 +37,7 @@ class Controller_Url extends Controller_Template
 			->filter(true, 'trim')
 			->rule('token', 'csrf::valid')
 			->rule('url', 'url')
-			//->callback('url', 'Uribl::validate')
+			->callback('url', 'Uribl::validate')
 			;
 		
 		// If they're logged in, they might have chosen a custom type

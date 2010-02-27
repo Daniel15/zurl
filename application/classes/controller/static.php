@@ -7,6 +7,8 @@ class Controller_Static extends Controller_Template
 	{
 		$this->template->title = ucfirst($page);
 		$this->template->body = new View('static/' . $page);
+		if ($this->logged_in)
+			$this->template->body->user = $this->user;
 	}
 }
 

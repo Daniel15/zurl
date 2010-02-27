@@ -52,20 +52,16 @@ abstract class Controller_Template extends Kohana_Controller_Template
 			Request::instance()->redirect('account/login');
 		}
 
-		// Only set these on a non-AJAX request
-		//if (!Request::$is_ajax)
-		//{
-			$this->template->body = '';
-			$this->template->logged_in = $this->logged_in = $this->auth->logged_in('login');
-			$this->template->user = $this->user;
-			// Check if we have a top message...
-			// Why is there no flashdata in Kohana 3?? O_O
-			if (($top_message = $this->session->get('top_message', null)) != null)
-			{
-				$this->template->top_message = $top_message;
-				$this->session->delete('top_message');
-			}
-		//}
+		$this->template->body = '';
+		$this->template->logged_in = $this->logged_in = $this->auth->logged_in('login');
+		$this->template->user = $this->user;
+		// Check if we have a top message...
+		// Why is there no flashdata in Kohana 3?? O_O
+		if (($top_message = $this->session->get('top_message', null)) != null)
+		{
+			$this->template->top_message = $top_message;
+			$this->session->delete('top_message');
+		}
 	}
 	
 	public function after()

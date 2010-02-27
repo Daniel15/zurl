@@ -32,6 +32,7 @@ Form::show_errors($errors);
 				
 				<p>
 					<input type="hidden" name="token" value="<?php echo csrf::token(); ?>" />
+					<input type="hidden" name="timezone" id="timezone" />
 					<input type="submit" value="Register" />
 				</p>
 			</form>

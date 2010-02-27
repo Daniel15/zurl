@@ -69,6 +69,11 @@ table tr:nth-child(even)
 	background: /*#cfe2e2;*/ #e6f0f0;
 }
 
+ul
+{
+	margin: 0;
+}
+
 div#container
 {
 	/*border: 4px solid #888;

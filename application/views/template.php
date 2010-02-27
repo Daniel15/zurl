@@ -52,7 +52,7 @@ if (!empty($jsload))
 	<ul id="nav">
 		<li><a href="<?php echo URL::site(''); ?>"><img src="res/icons/house.png" alt="Home" width="16" height="16" /> Home</a></li>
 		<!--li><a href="<?php echo URL::site('account/url'); ?>"><img src="res/icons/link.png" alt="URLs" width="16" height="16" /> My URLs</a></li-->
-		<li><a href="<?php echo URL::site('about.htm'); ?>"><img src="res/icons/book.png" alt="About" width="16" height="16" /> About and Terms of Use</a></li>
+		<li><a href="<?php echo URL::site('about.htm'); ?>"><img src="res/icons/book.png" alt="About" width="16" height="16" /> About zURL</a></li>
 		<li><a href="<?php echo URL::site('url/complaint'); ?>"><img src="res/icons/bomb.png" alt="Report Spam" width="16" height="16" /> Report a spam URL</a></li>
 <?php if (!$logged_in): ?>
 		<li><a href="<?php echo URL::site('account/register'); ?>"><img src="res/icons/user_add.png" alt="Register" width="16" height="16" /> Register</a></li>
@@ -91,7 +91,7 @@ elseif ($timezone == 0)
 	echo 'GMT';
 else
 	echo 'GMT+', $timezone;
-?></p>
+?>. <a href="<?php echo URL::site('about.htm'); ?>">Terms of Service</a> | <a href="<?php echo URL::site('url/complaint'); ?>">Report abuse</a> </p>	
 	</div>
 	<!--[if IE]></div></div><![endif]-->
 	<?php /*echo View::factory('profiler/stats');*/ ?>

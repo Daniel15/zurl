@@ -85,6 +85,13 @@ class Controller_Account extends Controller_Template
 			
 			if ($user->check())
 			{
+				// Do we have a timezone?
+				$timezone = Arr::get($_POST, 'timezone');
+				if ($timezone != '')
+				{
+					$user->timezone = $timezone;
+				}
+				
 				$user->save();
 				$user->add('roles', ORM::factory('role', array('name' => 'login')));
 				$user->login($_POST);
@@ -144,7 +151,7 @@ class Controller_Account extends Controller_Template
 		// Let's get the 10 most recent visitors, too.
 		/*$visitors = ORM::factory('hit')
 			->where('';*/
-		$visits = DB::select('hits.*', 'urls.*', array('countries.printable_name', 'country_name'))
+		$visits = DB::select('hits.*', array('UNIX_TIMESTAMP("hits.date")', 'date'), 'urls.*', array('countries.printable_name', 'country_name'))
 			->from('hits')
 			->join('urls')->on('urls.id', '=', 'hits.url_id')
 			->join('users')->on('users.id', '=', 'urls.user_id')

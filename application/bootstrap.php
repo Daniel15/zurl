@@ -1,5 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
+// Some ideas based off http://github.com/shadowhand/wingsc/blob/master/application/bootstrap.php
+
 //-- Environment setup --------------------------------------------------------
 
 /**
@@ -34,6 +36,12 @@ spl_autoload_register(array('Kohana', 'auto_load'));
  */
 ini_set('unserialize_callback_func', 'spl_autoload_call');
 
+
+/**
+ * Set the production status based on domain
+ */
+define('IN_PRODUCTION', $_SERVER['HTTP_HOST'] != 'dev.zurl.ws:82');
+
 //-- Configuration and initialization -----------------------------------------
 
 /**
@@ -52,7 +60,9 @@ ini_set('unserialize_callback_func', 'spl_autoload_call');
 Kohana::init(array
 (
 	'base_url' => 'http://dev.zurl.ws:82/',
-	'index_file' => ''
+	'index_file' => '',
+	'profiling' => !IN_PRODUCTION,
+	'caching' => IN_PRODUCTION,
 ));
 
 /**
@@ -83,17 +93,24 @@ Kohana::modules(array(
  * Set the routes. Each route must have a minimum of a name, a URI and a set of
  * defaults for the URI.
  */
-//if (!Route::cache())
-//{
+// If we're in development, or don't have cached routes
+if (!IN_PRODUCTION || !Route::cache())
+{
 	Route::set('static', '<page>.htm')
 		-> defaults(array(
 			'controller' => 'static'
+		));
+		
+	Route::set('favicons', 'favicons/<domain>', array('domain' => '[A-Za-z0-9\.\-]+'))
+		-> defaults(array(
+			'controller' => 'url_goto',
+			'action'     => 'favicon',
 		));
 
 		/*default*/
 	Route::set('controllers', '(<controller>(/<action>(/<id>)))',
 		array(
-			'controller' => '(url|urlgoto|static|account|stats)',
+			'controller' => '(url|url_goto|static|account|url_stats)',
 		))
 		->defaults(array(
 			'controller' => 'url',
@@ -137,16 +154,49 @@ Kohana::modules(array(
 			'controller' => 'url_goto',
 			'action' => 'go',
 		));
-		
-//	Route::cache(true);
-//}
+	
+	// Cache the routes if we're in production
+	if (IN_PRODUCTION)
+		Route::cache(true);
+}
 
 /**
  * Execute the main request. A source of the URI can be passed, eg: $_SERVER['PATH_INFO'].
  * If no source is specified, the URI will be automatically detected.
  */
  
-echo $request = Request::instance()
+/*echo $request = Request::instance()
 	->execute()
 	->send_headers()
-	->response;
+	->response;*/
+
+$request = null;
+
+try
+{
+	$request = Request::instance();
+	$request->execute();
+}
+catch (Exception $ex)
+{
+	// If in dev, just re-throw it
+	if (!IN_PRODUCTION)
+		throw $ex;
+		
+	// If we're in production, we have to show a nice error message instead.
+	// Log the error
+	Kohana::$log->add(Kohana::ERROR, Kohana::exception_text($ex));
+	// If the error was with getting a route, we won't have anything here yet. 
+	if ($request == null)
+		$request = Request::factory('');
+	// Now let's just load the error page.
+	$request->status = 500;
+	$request->response = new View('template');
+	$request->response->title = 'Error';
+	// This doesn't really matter right now...
+	$request->response->logged_in = false;
+	$request->response->body = $page = new View('error');
+	$page->message = $ex->getMessage();
+}
+
+echo $request->send_headers()->response;

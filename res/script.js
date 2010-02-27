@@ -243,3 +243,93 @@ var Page =
 };
 
 window.addEvent('domready', Page.init);
+
+/*********** Begin statistics stuff **************/
+
+var HitStats = 
+{
+	url_id: null,
+	
+	init: function()
+	{
+		// Attach the tab click handlers
+		$$('ul#types li').addEvent('click', HitStats.type_click);
+	},
+	
+	lib_loaded: function()
+	{
+		// Do we have a type?
+		if (window.location.hash)
+		{
+			HitStats.get_graph(window.location.hash.substring(1));
+		}
+		// Otherwise, default to month
+		else
+		{
+			HitStats.get_graph('month');
+		}
+	},
+	
+	type_click: function()
+	{
+		HitStats.get_graph(this.id.substring(5));
+	},
+	
+	get_graph: function(type)
+	{		
+		$('loading_chart').setStyle('display', 'block');
+		$('chart').set('html', '');
+		$('loading_text').set('html', 'Getting data...');
+		
+		// Mark this type as active
+		$$('ul#types li').removeClass('selected');
+		$('type_' + type).addClass('selected');
+		window.location.hash = type;
+		
+		var myRequest = new Request(
+		{
+			method: 'post',
+			url: base_url + 'url_stats/hits_' + type + '/' + HitStats.url_id,
+			onSuccess: function(data_text)
+			{
+				// JSON decode the data
+				var response = JSON.decode(data_text);
+				// Was there an error?
+				if (response.error)
+				{
+					alert('An error occurred while getting the graph data: ' + response.message);
+					return;
+				}
+				
+				// Add all the data to the graph
+				var data = $H(response.data);
+				var chartData = new google.visualization.DataTable();
+				chartData.addColumn('string', 'Date');
+				chartData.addColumn('number', 'Hits');
+				chartData.addRows(data.getLength());
+				
+				var i = -1;
+				
+				data.each(function(count, date)
+				{
+					chartData.setValue(++i, 0, date);
+					chartData.setValue(i, 1, +count);
+				});
+				
+				//var chart = new google.visualization.ColumnChart(document.getElementById('chart'));
+				var chart = new google.visualization.AreaChart(document.getElementById('chart'));
+				chart.draw(chartData, 
+				{
+					width: '100%',
+					height: '100%',
+					//is3D: true,
+					colors: ['#199e99'],
+					legend: 'none',
+					title: response.title
+				});
+				
+				$('loading_chart').setStyle('display', 'none');
+			}
+		}).send();
+	}
+};

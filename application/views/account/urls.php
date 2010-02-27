@@ -22,11 +22,11 @@ foreach ($urls as $url)
 					<tr id="url_', $url->id, '">
 						<td>
 							<img src="res/icons/bin_closed.png" alt="Delete" title="Delete" class="icon delete" width="16" height="16" />
-							<!--a href="', Url::site('account/url/stats/' . $url->id), '"><img src="res/icons/chart_bar.png" alt="Graphs" title="Graphs" class="icon"  width="16" height="16" /></a-->
+							<a href="', Url::site('url_stats/hits/' . $url->id), '"><img src="res/icons/chart_bar.png" alt="Statistics" title="Statistics" class="icon"  width="16" height="16" /></a>
 						</td>
 						<td>', Date::format($url->created_date, false), '</td>
 						<td><a href="', $url->short_url, '">', $url->short_url, '</a></td>
-						<td><img src="http://', htmlspecialchars($url->url_domain), '/favicon.ico" width="16" height="16" title="', htmlspecialchars($url->url_domain), '" alt="" class="favicon" /> ',  htmlspecialchars($url->url), '</td>
+						<td><img src="favicons/', htmlspecialchars($url->url_domain), '.ico" width="16" height="16" title="', htmlspecialchars($url->url_domain), '" alt="" class="favicon" /> ',  htmlspecialchars($url->url), '</td>
 						<td>', $url->hits, '</td>
 						<td>', $url->last_hit == 0 ? 'Never' : Date::format($url->last_hit, true), '</td>
 					</tr>';
@@ -39,11 +39,10 @@ foreach ($urls as $url)
 			
 			<?php echo $pagination; ?>
 			
-			<h2>Recent Visitors</h2>
+			<h2>Recent Visitors To All Your URLs</h2>
 <?php if (count($visits) == 0) : ?>
 				<p>Your URLs haven't had any visitors yet!</p>
 <?php else: ?>
-			<!-- Yes, inline styles. Must remove these eventually. -->
 			<table cellpadding="0" cellspacing="0">
 				<thead>
 					<tr>
@@ -51,6 +50,7 @@ foreach ($urls as $url)
 						<th class="shorturl">Short URL</th>
 						<th>Long URL</th>
 						<th>Referrer</th>
+						<th>Browser</th>
 						<th>Country</th>
 					</tr>
 				</thead>
@@ -64,7 +64,7 @@ foreach ($visits as $visit)
 				<tr>
 					<td>', Date::format($visit->date, true), '</td>
 					<td><a href="', $short_url, '">', $short_url, '</a></td>
-					<td><img src="http://', htmlspecialchars($visit->url_domain), '/favicon.ico" width="16" height="16" title="', htmlspecialchars($visit->url_domain), '" alt="" /> ', htmlspecialchars($visit->url), '</td>
+					<td><img src="favicons/', htmlspecialchars($visit->url_domain), '.ico" width="16" height="16" title="', htmlspecialchars($visit->url_domain), '" alt="" /> ', htmlspecialchars($visit->url), '</td>
 					<td>';
 					
 	if ($visit->referrer_domain == null)
@@ -73,18 +73,33 @@ foreach ($visits as $visit)
 	}
 	else
 	{
-		echo '<img src="http://', htmlspecialchars($visit->referrer_domain), '/favicon.ico" width="16" height="16" title="', htmlspecialchars($visit->referrer_domain), '" alt="" class="favicon" /> <a href="', htmlspecialchars($visit->referrer), '" rel="nofollow">', htmlspecialchars($visit->referrer_domain), '</a>';
+		echo '<img src="favicons/', htmlspecialchars($visit->referrer_domain), '.ico" width="16" height="16" title="', htmlspecialchars($visit->referrer_domain), '" alt="" class="favicon" /> <a href="', htmlspecialchars($visit->referrer), '" rel="nofollow">', htmlspecialchars($visit->referrer_domain), '</a>';
 	}
 	
 	echo '</td>
 					<td>';
+					
+	if ($visit->browser == null)
+	{
+		echo 'Unknown';
+	}
+	else
+	{
+		// Get a nice file name
+		$icon = str_replace(' ', '_', strtolower($visit->browser));
+		echo '<img src="res/browsers/', $icon, '.png" width="16" height="16" title="', $visit->browser, '" alt="" class="favicon" /> ', $visit->browser;
+	}
+	
+	echo '</td>
+					<td>';
+					
 	if ($visit->country == null)
 	{
 		echo 'Unknown';
 	}
 	else
 	{
-		echo '<img src="res/flags/', strtolower($visit->country), '.png" alt="', $visit->country, '" /> ', $visit->country_name, ' (', $visit->country, ')';
+		echo '<img src="res/flags/', strtolower($visit->country), '.png" alt="', $visit->country, '" class="favicon" /> ', $visit->country_name, ' (', $visit->country, ')';
 	}
 	
 	echo '</td>
@@ -93,4 +108,5 @@ foreach ($visits as $visit)
 ?>
 				</tbody>
 			</table>
+			<p>This table only shows the latest 20 visitors. To see more details on a specific URL, please go to its statistics page.</p>
 <?php endif; ?>

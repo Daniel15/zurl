@@ -54,12 +54,14 @@ CREATE TABLE IF NOT EXISTS `countries` (
 CREATE TABLE IF NOT EXISTS `hits` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `url_id` int(10) unsigned NOT NULL,
-  `date` int(10) unsigned NOT NULL,
-  `user_agent` varchar(255)  NOT NULL,
-  `ip_address` varchar(15)  NOT NULL,
-  `country` char(2)  NOT NULL,
-  `referrer` text  NOT NULL,
-  `referrer_domain` varchar(255)  NOT NULL,
+  `date` datetime NOT NULL,
+  `user_agent` varchar(255) NOT NULL,
+  `browser` varchar(255) NOT NULL,
+  `browser_version` varchar(10) NOT NULL,
+  `ip_address` varchar(15) NOT NULL,
+  `country` char(2) NOT NULL,
+  `referrer` text NOT NULL,
+  `referrer_domain` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `url_id` (`url_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
@@ -192,6 +194,13 @@ ALTER TABLE `user_tokens`
   ADD CONSTRAINT `user_tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
   
+--
+-- Dumping data for table `roles`
+--
+
+INSERT INTO `roles` (`id`, `name`, `description`) VALUES
+(1, 'login', 'Login privileges, granted after account confirmation'),
+(2, 'admin', 'Administrative user, has access to everything.');
   
 
 --

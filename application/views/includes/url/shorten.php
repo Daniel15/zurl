@@ -16,7 +16,7 @@ Form::show_errors($errors);
 				</p>
 <?php if ($logged_in): ?>
 				<p>
-					Type [todo: add help]: 
+					Type (<a href="about.htm#custom">what?</a>): 
 					
 					<?php echo Form::radio('type', 'standard', $values['type'] == '' || $values['type'] == 'standard', array('id' => 'type_standard')); ?>
 					<label for="type_standard" title="Standard URL: A normal zURL link containing random letters and numbers in the URL">Standard</label>
