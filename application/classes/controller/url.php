@@ -4,7 +4,7 @@ defined('SYSPATH') or die('No direct script access.');
 class Controller_Url extends Controller_Template
 {
 	protected $internal_template = array('invalid');
-	protected $secure_actions = array('delete');
+	protected $secure_actions = array('delete', 'stats');
 	
 	// Only allow [rate] URLs in [period] seconds before showing a CAPTCHA to guests
 	const RATE = 4;
@@ -262,6 +262,21 @@ Number of complaints: ' . $url->complaints;
 		
 		$this->template->title = 'Preview of URL http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 		$page = $this->template->body = new View('url/preview');
+		$page->url = $url;
+	}
+	
+	/**
+	 * Little page for stats - The actual work is done in the stats controller which is loaded via AJAX
+	 */
+	public function action_stats($id)
+	{
+		// Let's load the URL
+		if (($url = Controller_Url_Stats::get_url($id)) === false)
+			return;
+			
+		$this->template->title = 'Statistics for ' . $url->short_url;
+		$this->template->body = $page = new View('url/stats');
+		$this->template->jsload = 'HitStats.init.pass(' . $url->id . ')';
 		$page->url = $url;
 	}
 	

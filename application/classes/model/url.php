@@ -158,6 +158,7 @@ class Model_Url extends ORM
 		return !(bool) DB::select(array('COUNT("*")', 'total_count'))
 			->from($this->_table_name)
 			->where('type', '=', 'custom')
+			->and_where('status', '=', 'ok')
 			->and_where('custom_alias', '=', $value)
 			->execute($this->_db)
 			->get('total_count');

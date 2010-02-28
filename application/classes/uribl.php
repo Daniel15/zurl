@@ -26,13 +26,28 @@ class Uribl
 		),
 	);
 	
+	private static $blocklist = array('supersexbook.com', 'dirtysexbook.com', 'hornybooks.com', 'webcams.com', 'horny-gf.com', 
+		'chatroomchicks.com');
+		
+	private static $config;
+	
 	/**
 	 * Check if a particular host name is blocked at any DNS block list
 	 * @param	string		Host name to check
 	 */
 	public static function check($host)
-	{		
-		// Let's check each blocklist
+	{
+		if (self::$config == null)
+			self::$config = Kohana::config('uribl');
+			
+		// First, we'll check the internal block list.
+		if (in_array($host, self::$config->blocklist))
+		{
+			Kohana::$log->add('URIBL', $host . ' denied by internal blocklist');
+			return 'Internal blocklist';
+		}
+			
+		// Let's check each DNS blocklist
 		foreach (self::$dns_blocklists as $name => $blocklist)
 		{
 			$ip = Dns::get_ip($host . '.' . $blocklist['suffix']);

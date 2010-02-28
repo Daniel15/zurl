@@ -249,11 +249,14 @@ window.addEvent('domready', Page.init);
 var HitStats = 
 {
 	url_id: null,
+	type: 'hits',
+	timespan: 'month',
 	
 	init: function()
 	{
 		// Attach the tab click handlers
 		$$('ul#types li').addEvent('click', HitStats.type_click);
+		$$('ul#timespans li').addEvent('click', HitStats.timespan_click);
 	},
 	
 	lib_loaded: function()
@@ -261,37 +264,58 @@ var HitStats =
 		// Do we have a type?
 		if (window.location.hash)
 		{
-			HitStats.get_graph(window.location.hash.substring(1));
+			var hash = window.location.hash.substring(1).split('_');
+			HitStats.type = hash[0];
+			HitStats.timespan = hash[1];
 		}
-		// Otherwise, default to month
-		else
-		{
-			HitStats.get_graph('month');
-		}
+		
+		HitStats.get_graph();
 	},
 	
 	type_click: function()
 	{
-		HitStats.get_graph(this.id.substring(5));
+		HitStats.type = this.id.substring(5);
+		// Update the graph
+		HitStats.get_graph();
 	},
 	
-	get_graph: function(type)
-	{		
+	timespan_click: function()
+	{
+		HitStats.timespan = this.id.substring(5);
+		// Update the graph
+		HitStats.get_graph();
+	},
+	
+	get_graph: function()
+	{	
 		$('loading_chart').setStyle('display', 'block');
 		$('chart').set('html', '');
 		$('loading_text').set('html', 'Getting data...');
+	
+		window.location.hash = HitStats.type + '_' + HitStats.timespan;
 		
-		// Mark this type as active
+		// Update the selected tabs
 		$$('ul#types li').removeClass('selected');
-		$('type_' + type).addClass('selected');
-		window.location.hash = type;
+		$$('ul#timespans li').removeClass('selected');
+		$('type_' + HitStats.type).addClass('selected');
+		$('time_' + HitStats.timespan).addClass('selected');
+		
+		// Get the data table, hide it, and delete all rows
+		var data_table = $('chart_data');
+		data_table.setStyle('display', 'none');
+		
+		for (var i = data_table.tBodies[0].rows.length; i; i--)
+		{
+			data_table.tBodies[0].deleteRow(i - 1);
+		}
 		
 		var myRequest = new Request(
 		{
 			method: 'post',
-			url: base_url + 'url_stats/hits_' + type + '/' + HitStats.url_id,
+			url: base_url + 'url_stats/' + HitStats.type + '_' + HitStats.timespan + '/' + HitStats.url_id,
 			onSuccess: function(data_text)
 			{
+				var data_table = $('chart_data');
 				// JSON decode the data
 				var response = JSON.decode(data_text);
 				// Was there an error?
@@ -310,25 +334,53 @@ var HitStats =
 				
 				var i = -1;
 				
-				data.each(function(count, date)
+				data.each(function(val, label)
 				{
-					chartData.setValue(++i, 0, date);
-					chartData.setValue(i, 1, +count);
-				});
-				
-				//var chart = new google.visualization.ColumnChart(document.getElementById('chart'));
-				var chart = new google.visualization.AreaChart(document.getElementById('chart'));
-				chart.draw(chartData, 
-				{
-					width: '100%',
-					height: '100%',
-					//is3D: true,
-					colors: ['#199e99'],
-					legend: 'none',
-					title: response.title
+					chartData.setValue(++i, 0, label);
+					var data_row = new Element('tr');
+					
+					// If we just have a number, use that. Otherwise, it's an object with count and text.
+					if (typeof val != 'object')
+					{
+						chartData.setValue(i, 1, +val);
+						new Element('td', {'html': label}).inject(data_row);
+						new Element('td', {'html': val}).inject(data_row);
+					}
+					else
+					{
+						chartData.setValue(i, 1, +val.count);
+						new Element('td', {'html': val.text}).inject(data_row);
+						new Element('td', {'html': val.count}).inject(data_row);
+					}
+					
+					
+					data_row.inject(data_table.tBodies[0]);
 				});
 				
 				$('loading_chart').setStyle('display', 'none');
+				
+				type = response.type ? response.type : 'AreaChart'
+					
+				//var chart = new google.visualization.ColumnChart(document.getElementById('chart'));
+				// Make a graph based on the type we need
+				var chart = new google.visualization[type](document.getElementById('chart'));
+				var chartSettings = 
+				{
+					width: '100%',
+					//height: '100%',
+					height: '400px',
+					//is3D: true,
+					legend: response.type == 'PieChart' ? 'right' : 'none',
+					title: response.title
+				};
+				
+				if (type == 'LineChart')
+				{
+					chartSettings.colors = ['#199e99'];
+				}
+				
+				chart.draw(chartData, chartSettings);
+				data_table.setStyle('display', 'table');
 			}
 		}).send();
 	}

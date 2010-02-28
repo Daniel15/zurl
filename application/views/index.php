@@ -10,7 +10,7 @@ if (!$logged_in)
 ?>
 
 			<h2>Accounts</h2>
-			<p>The basic URL shortening service is available without registration. However, registering for an account allows you to keep track of your URLs, and see hit statistics. </p>
+			<p>The basic URL shortening service is available without registration. However, registering for an account allows you to keep track of your URLs, and see hit statistics. Take a look on the <a href="about.htm">About page</a> for more.</p>
 
 <?php
 }

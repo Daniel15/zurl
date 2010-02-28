@@ -134,7 +134,8 @@ div#chart_container
 div#chart_area
 {
 	border: 1px solid #C3C3C3;
-	height: 400px;
+	/* Height of chart + height of timespans ul */
+	height: 424px;
 	width: 100%;
 	margin-bottom: 1em;
 	background-color: white;
@@ -142,11 +143,14 @@ div#chart_area
 
 div#chart
 {
-	height: 100%;
+	height: 400px;
 	width: 100%;
 }
 
-
+table#chart_data
+{
+	display: none;
+}
 
 /* The tab bar itself */
 ul#types
@@ -180,6 +184,39 @@ ul#types li.selected
 	background-color: white;
 	cursor: default;
 	font-weight: bold;
+}
+
+ul#timespans
+{
+	padding: 0 0 0 0.4em;
+	margin-top: 4px;
+	/*border: 1px solid red;*/
+	height: 20px;
+}
+
+ul#timespans li
+{
+	display: inline;
+	padding: 0 0.4em;
+	border-right: 1px solid black;
+	cursor: pointer;
+	color: blue;
+}
+
+ul#timespans li:hover
+{
+	text-decoration: underline;
+}
+
+ul#timespans li.selected
+{
+	font-weight: bold;
+	color: black;
+}
+
+ul#timespans li.selected:hover
+{
+	text-decoration: none;
 }
 
 

@@ -5,18 +5,6 @@ class Controller_Url_Stats extends Controller_Template
 {
 	protected $auth_required = true;
 	
-	public function action_hits($id)
-	{
-		// Let's load the URL
-		if (($url = $this->get_url($id)) === false)
-			return;
-			
-		$this->template->title = 'Statistics for ' . $url->short_url;
-		$this->template->body = $page = new View('url/stats/hits');
-		$this->template->jsload = 'HitStats.init.pass(' . $url->id . ')';
-		$page->url = $url;
-	}
-	
 	public function action_hits_month($id)
 	{
 		$num_days = 30;
@@ -121,14 +109,197 @@ class Controller_Url_Stats extends Controller_Template
 		)));
 	}
 	
+	public function action_browsers_month($id)
+	{
+		$num_days = 30;
+			
+		$start_date = new DateTime();
+		$start_date->setTime(0, 0);
+		$start_date->modify('-' . $num_days . ' days');
+		
+		return $this->browsers($id, $start_date);
+	}
+	
+	public function action_browsers_year($id)
+	{
+		$start_date = new DateTime();
+		$start_date->setTime(0, 0);
+		$start_date->setDate(date('Y') - 1, date('m') + 1, 1);
+		
+		return $this->browsers($id, $start_date);
+	}
+	
+	private function browsers($id, $start_date)
+	{
+		if (($url = $this->get_url($id)) === false)
+			return;
+			
+		$end_date = new DateTime();
+		$end_date->setTime(0, 0);
+			
+		// Here's our logic!
+		$browsers = DB::select('browser', array('COUNT("*")', 'count'))
+			->from('hits')
+			->where('url_id', '=', $url->id)
+			->and_where('date', '>=', $start_date->format('Y-m-d H:i:s'))
+			->group_by('browser')
+			->order_by('count', 'desc')
+			->execute();
+		
+		$results = array();
+		$total = 0;
+		
+		foreach ($browsers as $browser)
+		{
+			$icon = str_replace(' ', '_', strtolower($browser['browser']));
+			
+			$results[$browser['browser']] = array(
+				'count' => $browser['count'],
+				'text' => '<img src="res/browsers/' . $icon . '.png" width="16" height="16" title="' . $browser['browser'] . '" alt="" class="favicon" /> ' . $browser['browser']
+			);
+			$total += $browser['count'];
+		}
+		
+		die(json_encode(array(
+			'error' => false,
+			'title' => 'Browsers to ' . $url->short_url . ' from ' . $start_date->format('Y-m-d') . ' to ' . $end_date->format('Y-m-d'), 
+			'total' => $total,
+			'type' => 'PieChart',
+			'data' => $results,
+		)));
+	}
+	
+	public function action_referrers_month($id)
+	{
+		$num_days = 30;
+			
+		$start_date = new DateTime();
+		$start_date->setTime(0, 0);
+		$start_date->modify('-' . $num_days . ' days');
+		
+		return $this->referrers($id, $start_date);
+	}
+	
+	public function action_referrers_year($id)
+	{
+		$start_date = new DateTime();
+		$start_date->setTime(0, 0);
+		$start_date->setDate(date('Y') - 1, date('m') + 1, 1);
+		
+		return $this->referrers($id, $start_date);
+	}
+	
+	private function referrers($id, $start_date)
+	{
+		if (($url = $this->get_url($id)) === false)
+			return;
+			
+		$end_date = new DateTime();
+		$end_date->setTime(0, 0);
+			
+		// Here's our logic!
+		$referrers = DB::select('referrer_domain', array('COUNT("*")', 'count'))
+			->from('hits')
+			->where('url_id', '=', $url->id)
+			->and_where('date', '>=', $start_date->format('Y-m-d H:i:s'))
+			->and_where('referrer_domain', '!=', '')
+			->group_by('referrer_domain')
+			->order_by('count', 'desc')
+			->execute();
+		
+		$results = array();
+		$total = 0;
+		
+		foreach ($referrers as $referrer)
+		{
+				
+			$results[$referrer['referrer_domain']] = array(
+				'count' => $referrer['count'], 
+				'text' => '<img src="favicons/' . htmlspecialchars($referrer['referrer_domain']) . '.ico" width="16" height="16" title="' . htmlspecialchars($referrer['referrer_domain']) . '" alt="" class="favicon" /> <a href="http://' . htmlspecialchars($referrer['referrer_domain']) . '/" rel="nofollow">' . htmlspecialchars($referrer['referrer_domain']) . '</a>',
+			);
+			$total += $referrer['count'];
+		}
+		
+		die(json_encode(array(
+			'error' => false,
+			'title' => 'Referrers to ' . $url->short_url . ' from ' . $start_date->format('Y-m-d') . ' to ' . $end_date->format('Y-m-d'), 
+			'total' => $total,
+			'type' => 'PieChart',
+			'data' => $results,
+		)));
+	}
+	
+	public function action_countries_month($id)
+	{
+		$num_days = 30;
+			
+		$start_date = new DateTime();
+		$start_date->setTime(0, 0);
+		$start_date->modify('-' . $num_days . ' days');
+		
+		return $this->countries($id, $start_date);
+	}
+	
+	public function action_countries_year($id)
+	{
+		$start_date = new DateTime();
+		$start_date->setTime(0, 0);
+		$start_date->setDate(date('Y') - 1, date('m') + 1, 1);
+		
+		return $this->countries($id, $start_date);
+	}
+	
+	private function countries($id, $start_date)
+	{
+		if (($url = $this->get_url($id)) === false)
+			return;
+			
+		$end_date = new DateTime();
+		$end_date->setTime(0, 0);
+		
+		// Here's our logic!
+		$countries = DB::select('country', array('countries.printable_name', 'country_name'), array('COUNT("*")', 'count'))
+			->from('hits')
+			->join('countries', 'left')->on('countries.iso', '=', 'hits.country')
+			->where('url_id', '=', $url->id)
+			->and_where('date', '>=', $start_date->format('Y-m-d H:i:s'))
+			->group_by('country')
+			->group_by('country_name')
+			->order_by('count', 'desc')
+			->execute();
+		
+		$results = array();
+		$total = 0;
+		
+		foreach ($countries as $country)
+		{
+			if ($country['country_name'] == '')
+				$country['country_name'] = 'Unknown';
+				
+			$results[$country['country_name']] = array(
+				'count' => $country['count'],
+				'text' => '<img src="res/flags/' . strtolower($country['country']) . '.png" alt="' . $country['country'] . '" class="favicon" /> ' . $country['country_name'] . ' (' . $country['country'] . ')',
+			);
+			$total += $country['count'];
+		}
+		
+		die(json_encode(array(
+			'error' => false,
+			'title' => 'Countries to ' . $url->short_url . ' from ' . $start_date->format('Y-m-d') . ' to ' . $end_date->format('Y-m-d'), 
+			'total' => $total,
+			'type' => 'GeoMap',
+			'data' => $results,
+		)));
+	}
+	
 	/**
 	 * Get a URL. Returns false or shows an error if the URL is invalid, or not owned by the current user.
 	 * @param int ID of the URL
 	 */
-	private function get_url($id)
+	public static function get_url($id)
 	{
 		$url = ORM::factory('url', $id);
-		if (!$url->loaded() || $url->user_id != $this->user->id)
+		if (!$url->loaded() || $url->user_id != Auth::instance()->get_user()->id)
 		{
 			if (Request::$is_ajax)
 			{
