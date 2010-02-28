@@ -37,13 +37,14 @@ class Uribl
 	 */
 	public static function check($host)
 	{
-		if (self::$config == null)
-			self::$config = Kohana::config('uribl');
+		//if (self::$config == null)
+		//	self::$config = Kohana::config('uribl');
 			
 		// First, we'll check the internal block list.
-		if (in_array($host, self::$config->blocklist))
+		//if (in_array($host, self::$config->blocklist))
+		if (in_array($host, Uribl::$blocklist))
 		{
-			Kohana::$log->add('URIBL', $host . ' denied by internal blocklist');
+			//Kohana::$log->add('URIBL', $host . ' denied by internal blocklist');
 			return 'Internal blocklist';
 		}
 			
@@ -72,7 +73,7 @@ class Uribl
 				}
 				
 				$return = $name . ' [' . implode(', ', $lists) . ']';
-				Kohana::$log->add('URIBL', $host . ' denied by ' . $return);
+				//Kohana::$log->add('URIBL', $host . ' denied by ' . $return);
 				return $return;
 			}
 		}

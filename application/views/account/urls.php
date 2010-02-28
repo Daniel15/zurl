@@ -18,15 +18,17 @@
 <?php
 foreach ($urls as $url)
 {
+	$wrapped_url = chunk_split($url->url, 35, '&#8203;');
+
 	echo '
 					<tr id="url_', $url->id, '">
 						<td>
 							<img src="res/icons/bin_closed.png" alt="Delete" title="Delete" class="icon delete" width="16" height="16" />
-							<a href="', Url::site('url_stats/hits/' . $url->id), '"><img src="res/icons/chart_bar.png" alt="Statistics" title="Statistics" class="icon"  width="16" height="16" /></a>
+							<a href="', Url::site('url/stats/' . $url->id), '"><img src="res/icons/chart_bar.png" alt="Statistics" title="Statistics" class="icon"  width="16" height="16" /></a>
 						</td>
 						<td>', Date::format($url->created_date, false), '</td>
 						<td><a href="', $url->short_url, '">', $url->short_url, '</a></td>
-						<td><img src="favicons/', htmlspecialchars($url->url_domain), '.ico" width="16" height="16" title="', htmlspecialchars($url->url_domain), '" alt="" class="favicon" /> ',  htmlspecialchars($url->url), '</td>
+						<td><img src="favicons/', htmlspecialchars($url->url_domain), '.ico" width="16" height="16" title="', htmlspecialchars($url->url_domain), '" alt="" class="favicon" /> ',  $wrapped_url, '</td>
 						<td>', $url->hits, '</td>
 						<td>', $url->last_hit == 0 ? 'Never' : Date::format($url->last_hit, true), '</td>
 					</tr>';
@@ -48,7 +50,7 @@ foreach ($urls as $url)
 					<tr>
 						<th class="datetime">Date</th>
 						<th class="shorturl">Short URL</th>
-						<th>Long URL</th>
+						<!--th>Long URL</th-->
 						<th>Referrer</th>
 						<th>Browser</th>
 						<th>Country</th>
@@ -58,13 +60,14 @@ foreach ($urls as $url)
 <?php
 foreach ($visits as $visit)
 {
+	$wrapped_url = chunk_split($visit->url, 15, '&#8203;');
 	$short_url = Model_Url::get_short_url($visit->id, $visit->type, $visit->custom_alias, $visit->user_id);
 	
 	echo '
 				<tr>
 					<td>', Date::format($visit->date, true), '</td>
-					<td><a href="', $short_url, '">', $short_url, '</a></td>
-					<td><img src="favicons/', htmlspecialchars($visit->url_domain), '.ico" width="16" height="16" title="', htmlspecialchars($visit->url_domain), '" alt="" /> ', htmlspecialchars($visit->url), '</td>
+					<td><img src="favicons/', htmlspecialchars($visit->url_domain), '.ico" width="16" height="16" title="', htmlspecialchars($visit->url_domain), '" alt="" /> <a href="', $short_url, '">', $short_url, '</a></td>
+					<!--td><img src="favicons/', htmlspecialchars($visit->url_domain), '.ico" width="16" height="16" title="', htmlspecialchars($visit->url_domain), '" alt="" /> ', $wrapped_url, '</td-->
 					<td>';
 					
 	if ($visit->referrer_domain == null)
