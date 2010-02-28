@@ -7,7 +7,7 @@ class Controller_Url extends Controller_Template
 	protected $secure_actions = array('delete', 'stats');
 	
 	// Only allow [rate] URLs in [period] seconds before showing a CAPTCHA to guests
-	const RATE = 4;
+	const RATE = 3;
 	const RATE_PERIOD = 60;
 	
 	public function action_index()
@@ -73,6 +73,8 @@ class Controller_Url extends Controller_Template
 			$page->shorten = new View('includes/url/shorten');
 			$page->shorten->errors = $post->errors('shorten');
 			$page->shorten->values = $post;
+			$this->session->set('passed_captcha', true);
+			
 			if (!$this->logged_in && self::exceeded_rate_limit())
 			{
 				$page->shorten->captcha = Recaptcha::get_html();
@@ -297,6 +299,9 @@ Number of complaints: ' . $url->complaints;
 	 */
 	private static function exceeded_rate_limit()
 	{
+		if (!Session::instance()->get('passed_captcha', false))
+			return true;
+			
 		$count = DB::select(array('COUNT("*")', 'total_count'))
 			->from('urls')
 			->where('created_ip', '=', $_SERVER['REMOTE_ADDR'])
