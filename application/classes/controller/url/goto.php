@@ -23,16 +23,20 @@ class Controller_Url_Goto extends Controller
 		$url->hits++;
 		$url->save();
 		// Log the hit itself
-		$hit = ORM::factory('hit');
-		$hit->url = $url;
-		$hit->date = time();
-		$hit->user_agent = Request::$user_agent;
-		$hit->browser = $this->request->user_agent('browser');
-		$hit->browser_version = $this->request->user_agent('version');
-		$hit->ip_address = $_SERVER['REMOTE_ADDR'];
-		$hit->country = self::get_country($hit->ip_address);
-		$hit->referrer = Request::$referrer;
-		$hit->save();
+		// But, don't log hits to URLs by guests (since they can't use stats anyways)
+		if ($url->user_id != 0)
+		{
+			$hit = ORM::factory('hit');
+			$hit->url = $url;
+			$hit->date = time();
+			$hit->user_agent = Request::$user_agent;
+			$hit->browser = $this->request->user_agent('browser');
+			$hit->browser_version = $this->request->user_agent('version');
+			$hit->ip_address = $_SERVER['REMOTE_ADDR'];
+			$hit->country = self::get_country($hit->ip_address);
+			$hit->referrer = Request::$referrer;
+			$hit->save();
+		}
 		
 		$this->request->redirect($url->url);
 	}
