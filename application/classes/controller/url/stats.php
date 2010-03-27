@@ -151,6 +151,9 @@ class Controller_Url_Stats extends Controller_Template
 		
 		foreach ($browsers as $browser)
 		{
+			if ($browser['browser'] == '')
+				$browser['browser'] = 'Unknown';
+				
 			$icon = str_replace(' ', '_', strtolower($browser['browser']));
 			
 			$results[$browser['browser']] = array(
