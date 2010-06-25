@@ -299,6 +299,8 @@ Number of complaints: ' . $url->complaints;
 	 */
 	private static function exceeded_rate_limit()
 	{
+		return true; // Temporary, to prevent spam
+		
 		if (!Session::instance()->get('passed_captcha', false))
 			return true;
 			

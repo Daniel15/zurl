@@ -57,7 +57,7 @@ class Shortener
 			return Model_Url::find_by_custom_alias($alias);
 		}
 		// Is it a user custom URL?
-		elseif (preg_match('~^([A-Za-z0-9\-_]+)(\.dev|\.staging|\.pre)?.zurl~', $hostname, $matches) && $matches[1] != 'dev' && $matches[1] != 'staging' && $matches[1] != 'pre')
+		elseif (preg_match('~^([A-Za-z0-9\-_]+)(\.dev|\.staging|\.pre)?.zurl~', $hostname, $matches) && !in_array($matches[1], array('dev', 'staging', 'pre')))
 		{
 			return Model_Url::find_by_user_alias($alias, $matches[1]);
 		}
