@@ -23,6 +23,9 @@ else
 ?>
 			
 			<h2>News</h2>
+			<h3>6th January 2011</h3>
+			<p>Due to the amount of spam and my lack of time to remove it all, you are now required to create an account in order to use zURL. Sorry for the inconvenience, but this should significantly reduce spam.</p>
+			
 			<h3>28th February 2010</h3>
 			<p>After a long period of inactivity, a new zURL site is finally up! This adds a large number of new features to zURL, including (for registered members) hit statistics include referrals, country and web browser of people that visit your URLs, as well as hit statistics for the last 30 days and last year. Note that all old user accounts will not longer work - If you were an old user, you will have to re-register. Please send all feedback to daniel [-at-] d15.biz. Thanks!</p>
 			<p>&mdash; Daniel</p>
