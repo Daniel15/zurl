@@ -170,20 +170,5 @@ class Controller_Account extends Controller_Template
 		$page->pagination = $pagination->render();
 		$page->visits = $visits;
 	}
-	
-	/*
-	public function action_test()
-	{
-		$user = ORM::factory('user');
-		$user->username = 'test';
-		$user->email = 'test@dan.cx';
-		$user->password = 'test12345';
-		$user->save();
-		$user->add('roles', ORM::factory('role', array('name' => 'admin')));
-		$user->add('roles', ORM::factory('role', array('name' => 'login')));
-		
-		$this->template->body = 'Test user created';
-		
-	}*/
 }
 ?>

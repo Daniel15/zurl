@@ -282,18 +282,6 @@ Number of complaints: ' . $url->complaints;
 		$page->url = $url;
 	}
 	
-	public function action_test()
-	{
-		for ($i = 0; $i < 9000; $i++)
-		{
-			$j = Shortener::alias_to_id(Shortener::id_to_alias($i));
-			if ($i != $j)
-			{
-				echo 'MISMATCH. ', $i, ' != ', $j, '<br />';
-			}
-		}
-	}
-	
 	/**
 	 * Check if the current user should be rate limited
 	 */
