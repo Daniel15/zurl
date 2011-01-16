@@ -4,7 +4,7 @@ return array
 (
 	'driver' => 'ORM',
 	'hash_method' => 'sha1',
-	'salt_pattern' => '1, 2, 4, 10, 13, 15, 20, 21, 24, 27',
+	'salt_pattern' => '1, 2, 4, 9, 11, 12, 17, 20, 24, 27',
 	'lifetime' => 1209600,
 	'session_key' => 'auth_user',
 	'users' => array
