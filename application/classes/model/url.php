@@ -144,7 +144,7 @@ class Model_Url extends ORM
 		$records = $records->execute($this->_db)
 			->get('records_found');
 
-		$this->_reset();
+		//$this->_reset();
 
 		// Return the total number of records in a table
 		return $records;

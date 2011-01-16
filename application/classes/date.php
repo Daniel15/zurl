@@ -1,7 +1,7 @@
 <?php
 defined('SYSPATH') or die('No direct script access.');
 
-class Date
+class Date extends Kohana_Date
 {
 	/**
 	 * Format a date using the user's timezone

@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS `hits` (
   `browser_version` varchar(10) NOT NULL,
   `ip_address` varchar(15) NOT NULL,
   `country` char(2) NOT NULL,
-  `referrer` text NOT NULL,
+  `referrer` text NULL,
   `referrer_domain` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `url_id` (`url_id`)
@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS `urls` (
   `url_domain` varchar(255)  NOT NULL,
   `created_date` int(11) unsigned NOT NULL,
   `created_ip` varchar(15)  NOT NULL,
-  `created_ip2` varchar(100)  NOT NULL,
+  `created_ip2` varchar(100)  NULL,
   `complaints` int(11) NOT NULL DEFAULT '0',
   `last_complaint` int(11) unsigned DEFAULT NULL,
   `last_check` int(11) unsigned DEFAULT NULL,
