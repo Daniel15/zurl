@@ -1,3 +1,5 @@
+-- ALTER TABLE `urls` CHANGE `type` `type` ENUM( 'standard', 'custom', 'user', 'domain', 'domain_custom' ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT 'standard'
+
 -- phpMyAdmin SQL Dump
 -- version 3.3.0-rc1
 -- http://www.phpmyadmin.net
@@ -115,8 +117,9 @@ CREATE TABLE IF NOT EXISTS `urls` (
   `public` tinyint(1) NOT NULL DEFAULT '1',
   `hits` int(10) unsigned NOT NULL DEFAULT '0',
   `last_hit` int(10) unsigned DEFAULT NULL,
-  `type` enum('standard','custom','user')  NOT NULL DEFAULT 'standard',
+  `type` enum('standard','custom','user','domain','domain_custom')  NOT NULL DEFAULT 'standard',
   `custom_alias` varchar(255)  DEFAULT NULL,
+  `domain_id` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
@@ -157,6 +160,20 @@ CREATE TABLE IF NOT EXISTS `user_tokens` (
   UNIQUE KEY `uniq_token` (`token`),
   KEY `fk_user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `domains`
+--
+
+CREATE TABLE IF NOT EXISTS `domains` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) unsigned NOT NULL,
+  `domain` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `domain` (`domain`),
+  KEY `user_id` (`user_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+
 
 --
 -- Constraints for dumped tables

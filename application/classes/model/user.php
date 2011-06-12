@@ -33,6 +33,21 @@ class Model_User extends Model_Auth_User
 		'user_tokens' => array('model' => 'user_token'),
 		'roles'       => array('model' => 'role', 'through' => 'roles_users'),
 		'urls'        => array(),
+		'domains'     => array(),
 	);
+	
+	/**
+	 * Get the custom domains this user can use
+	 */
+	public function domain_list()
+	{
+		$output = array();
+		
+		$domains = $this->domains->find_all();
+		foreach ($domains as $domain)
+			$output[$domain->id] = $domain->domain;
+
+		return $output;
+	}
 }
 ?>

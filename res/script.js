@@ -60,10 +60,7 @@ var Shorten =
 	{
 		if ($('type_custom'))
 		{
-			//$('alias_p').setStyle('display', 'none');
-			$('type_standard').addEvent('click', Shorten.change_type);
-			$('type_custom').addEvent('click', Shorten.change_type);
-			$('type_user').addEvent('click', Shorten.change_type);
+			$$('#types input').addEvent('click', Shorten.change_type);
 			
 			Shorten.change_type();
 		}
@@ -75,15 +72,26 @@ var Shorten =
 		{
 			$('alias_p').setStyle('display', '');
 			$('prefix').set('html', 'c');
+			if ($('domain_custom_p'))
+				$('domain_custom_p').setStyle('display', 'none');
 		}
 		else if ($('type_user').checked)
 		{
 			$('alias_p').setStyle('display', '');
 			$('prefix').set('html', $('current_user').get('text'));
+			if ($('domain_custom_p'))
+				$('domain_custom_p').setStyle('display', 'none');
+		}
+		else if ($('type_domain_custom') && $('type_domain_custom').checked)
+		{
+			$('alias_p').setStyle('display', 'none');
+			$('domain_custom_p').setStyle('display', '');
 		}
 		else
 		{
 			$('alias_p').setStyle('display', 'none');
+			if ($('domain_custom_p'))
+				$('domain_custom_p').setStyle('display', 'none');
 		}
 	}
 }

@@ -57,13 +57,29 @@ class Shortener
 			return Model_Url::find_by_custom_alias($alias);
 		}
 		// Is it a user custom URL?
-		elseif (preg_match('~^([A-Za-z0-9\-_]+)(\.dev|\.staging|\.pre)?.zurl~', $hostname, $matches) && !in_array($matches[1], array('dev', 'staging', 'pre')))
+		elseif (preg_match('~^([A-Za-z0-9\-_]+)(\.dev|\.staging|\.pre)?\.zurl~', $hostname, $matches) && !in_array($matches[1], array('dev', 'staging', 'pre')))
 		{
 			return Model_Url::find_by_user_alias($alias, $matches[1]);
 		}
-		else
+		// Is it a normal zURL URL?
+		elseif (strpos($hostname, 'zurl.') !== false)
 		{
 			return Model_Url::find_by_alias($alias);
+		}
+		// Must be a custom user domain
+		else
+		{
+			// Find the domain
+			// TODO: Better error handling
+			// TODO: Cache these somewhere
+			$domain = ORM::factory('domain')
+				->where('domain', '=', $hostname)
+				->find();
+				
+			if (!$domain->loaded())
+				throw new Exception('Domain ' . htmlspecialchars($hostname) . ' not found!');
+				
+			return Model_Url::find_by_domain_custom($alias, $domain);
 		}
 	}
 }

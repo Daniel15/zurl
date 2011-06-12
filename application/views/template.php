@@ -94,6 +94,6 @@ else
 ?>. <a href="<?php echo URL::site('about.htm'); ?>">Terms of Service</a> | <a href="<?php echo URL::site('url/complaint'); ?>">Report abuse</a> </p>	
 	</div>
 	<!--[if IE]></div></div><![endif]-->
-	<?php /*echo View::factory('profiler/stats');*/ ?>
+	<?php if (!IN_PRODUCTION) echo View::factory('profiler/stats'); ?>
 </body>
 </html>

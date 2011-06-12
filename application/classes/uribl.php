@@ -34,6 +34,10 @@ class Uribl
 	 */
 	public static function check($host)
 	{
+		// Don't do URIBL checks in development
+		if (!IN_PRODUCTION)
+			return false;
+			
 		if (self::$config == null)
 			self::$config = Kohana::config('uribl');
 			

@@ -31,6 +31,8 @@ class Controller_Url extends Controller_Template
 	
 	public function action_shorten()
 	{
+		// TODO: Clean up this function, it's ugly :(
+		
 		// TODO: move these validation rules into the MODEL!
 		$post = Validate::factory($_POST)
 			->rule(true, 'not_empty')
@@ -45,15 +47,24 @@ class Controller_Url extends Controller_Template
 		{
 			$post->rule('type', 'Controller_Url::validate_type_member');
 		
+			// Custom or user URL?
 			if (in_array(Arr::get($_POST, 'type'), array('custom', 'user')))
 			{
 				$post
 					->rule('alias', 'not_empty')
 					->filter('alias', 'strtolower')
 					->rule('alias', 'regex', array('~^[a-z0-9\-_]+$~'));
-					
+			
 				if ($_POST['type'] == 'custom')
 					$post->callback('alias', 'Controller_Url::custom_alias_available');
+			}
+			// Domain - Custom URL?
+			elseif (Arr::get($_POST, 'type') == 'domain_custom')
+			{
+				$post
+					->rule('domain_custom', 'Controller_Url::validate_domain')
+					->filter('domain_alias', 'strtolower')
+					->rule('domain_alias', 'regex', array('~^[a-z0-9\-_]+$~'));
 			}
 		}
 		else
@@ -76,9 +87,11 @@ class Controller_Url extends Controller_Template
 			$this->session->set('passed_captcha', true);
 			
 			if (!$this->logged_in && self::exceeded_rate_limit())
-			{
 				$page->shorten->captcha = Recaptcha::get_html();
-			}
+			
+			// Check if they have any custom domains
+			if ($this->logged_in)
+				$page->shorten->domains = $this->user->domain_list();
 
 			$page->shorten->logged_in = $this->logged_in;
 			return;
@@ -111,6 +124,11 @@ class Controller_Url extends Controller_Template
 				$url->type = $post['type'];
 				if (in_array($url->type, array('custom', 'user')))
 					$url->custom_alias = $post['alias'];
+				elseif ($url->type == 'domain_custom')
+				{
+					$url->custom_alias = empty($post['domain_alias']) ? null : $post['domain_alias'];
+					$url->domain_id = $post['domain_custom'];
+				}
 			}
 				
 			$url->save();
@@ -304,7 +322,7 @@ Number of complaints: ' . $url->complaints;
 	
 	public static function validate_type_member($type)
 	{
-		return in_array($type, array('standard', 'custom', 'user'));
+		return in_array($type, array('standard', 'custom', 'user', 'domain', 'domain_custom'));
 	}
 	
 	public static function validate_type_guest($type)
@@ -316,5 +334,13 @@ Number of complaints: ' . $url->complaints;
 	{
 		if (!ORM::factory('url')->check_custom_alias_available($validate[$field]))
 			$validate->error($field, 'alias_available', array($validate[$field]));
+	}
+	
+	/**
+	 * Validate whether the current user owns the specified domain
+	 */
+	public static function validate_domain($domain)
+	{
+		return ORM::factory('domain', $domain)->user->id == Auth::instance()->get_user()->id;
 	}
 }
