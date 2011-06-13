@@ -120,6 +120,7 @@ CREATE TABLE IF NOT EXISTS `urls` (
   `type` enum('standard','custom','user','domain','domain_custom')  NOT NULL DEFAULT 'standard',
   `custom_alias` varchar(255)  DEFAULT NULL,
   `domain_id` int(10) unsigned DEFAULT NULL,
+  `domain_url_id` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;

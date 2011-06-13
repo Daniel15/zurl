@@ -25,6 +25,14 @@ Due to spam, users are now required to create an account to use zURL. Sorry for 
 				<p id="types">
 					Type (<a href="about.htm#custom">what?</a>): 
 					
+	<?php if (!empty($domains)) : ?>
+					<?php echo Form::radio('type', 'domain', $values['type'] == 'domain', array('id' => 'type_domain')); ?>
+					<label for="type_domain" title="Domain URL: Like a standard URL, except using your custom domain">Domain (standard)</label>
+					
+					<?php echo Form::radio('type', 'domain_custom', $values['type'] == 'domain_custom', array('id' => 'type_domain_custom')); ?>
+					<label for="type_domain_custom" title="Custom domain URL: Like a user URL, except using your custom domain">Domain (custom)</label>
+	<?php endif; ?>
+					
 					<?php echo Form::radio('type', 'standard', $values['type'] == '' || $values['type'] == 'standard', array('id' => 'type_standard')); ?>
 					<label for="type_standard" title="Standard URL: A normal zURL link containing random letters and numbers in the URL">Standard</label>
 					
@@ -33,15 +41,14 @@ Due to spam, users are now required to create an account to use zURL. Sorry for 
 					
 					<?php echo Form::radio('type', 'user', $values['type'] == 'user', array('id' => 'type_user')); ?>
 					<label for="type_user" title="User URL: Like a custom URL, except with your username at the start">User</label>
-	<?php if (!empty($domains)) : ?>
-					<?php echo Form::radio('type', 'domain_custom', $values['type'] == 'domain_custom', array('id' => 'type_domain_custom')); ?>
-					<label for="type_domain_custom" title="Custom domain URL: Like a user URL, except using your custom domain">Custom Domain</label>
-	<?php endif; ?>
 				</p>
 				<p id="alias_p">
 					Short URL: http://<strong id="prefix"></strong>.zurl.ws/<input type="text" name="alias" id="alias" value="<?php echo !empty($values['alias']) ? htmlspecialchars($values['alias']) : ''; ?>" />
 				</p>
 	<?php if (!empty($domains)) : ?>
+				<p id="domain_p">
+					Domain: <?php echo Form::select('domain', $domains, Arr::get($values, 'domain'), array('id' => 'domain')); ?>
+				</p>
 				<p id="domain_custom_p">
 					Short URL: http://<?php echo Form::select('domain_custom', $domains, Arr::get($values, 'domain_custom'), array('id' => 'domain_custom')); ?>/
 					<input type="text" name="domain_alias" id="domain_alias" value="<?php echo !empty($values['domain_alias']) ? htmlspecialchars($values['domain_alias']) : ''; ?>" />

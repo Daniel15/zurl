@@ -40,7 +40,7 @@ ini_set('unserialize_callback_func', 'spl_autoload_call');
 /**
  * Set the production status based on domain
  */
-define('IN_PRODUCTION', $_SERVER['HTTP_HOST'] != 'dev.zurl.ws:82');
+define('IN_PRODUCTION', !in_array($_SERVER['HTTP_HOST'], array('dev.zurl.ws:82', 'customzurltest.local', 'customzurltest2.local')));
 
 //-- Configuration and initialization -----------------------------------------
 

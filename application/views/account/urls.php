@@ -61,7 +61,7 @@ foreach ($urls as $url)
 foreach ($visits as $visit)
 {
 	$wrapped_url = chunk_split($visit->url, 15, '&#8203;');
-	$short_url = Model_Url::get_short_url($visit->id, $visit->type, $visit->custom_alias, $visit->user_id, $visit->domain_id);
+	$short_url = Model_Url::get_short_url($visit->id, $visit->type, $visit->custom_alias, $visit->user_id, $visit->domain_id, $visit->domain_url_id);
 	
 	echo '
 				<tr>

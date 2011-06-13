@@ -63,8 +63,14 @@ class Controller_Url extends Controller_Template
 			{
 				$post
 					->rule('domain_custom', 'Controller_Url::validate_domain')
+					->rule('domain_alias', 'not_empty')
 					->filter('domain_alias', 'strtolower')
 					->rule('domain_alias', 'regex', array('~^[a-z0-9\-_]+$~'));
+			}
+			elseif (Arr::get($_POST, 'type') == 'domain')
+			{
+				$post
+					->rule('domain', 'Controller_Url::validate_domain');
 			}
 		}
 		else
@@ -106,6 +112,11 @@ class Controller_Url extends Controller_Template
 		{
 			$url->and_where('user_id', '=', $this->user);
 			$url->and_where('type', '=', $post['type']);
+			// For domain URLs, need to check the domain too
+			if ($post['type'] == 'domain')
+				$url->and_where('domain_id', '=', $post['domain']);
+			elseif ($post['type'] == 'domain_custom')
+				$url->and_where('domain_id', '=', $post['domain_custom']);
 		}
 		
 		$url->find();
@@ -124,10 +135,19 @@ class Controller_Url extends Controller_Template
 				$url->type = $post['type'];
 				if (in_array($url->type, array('custom', 'user')))
 					$url->custom_alias = $post['alias'];
+				// Custom domain, custom alias
 				elseif ($url->type == 'domain_custom')
 				{
 					$url->custom_alias = empty($post['domain_alias']) ? null : $post['domain_alias'];
 					$url->domain_id = $post['domain_custom'];
+				}
+				// Custom domain, "normal" alias
+				elseif ($url->type == 'domain')
+				{
+					$domain = ORM::factory('domain', $post['domain']);
+					$url->domain_id = $domain->id;
+					// Domain_url_id is a unique ID for this domain on this URL.
+					$url->domain_url_id = $domain->next_url_id();
 				}
 			}
 				
@@ -235,7 +255,15 @@ class Controller_Url extends Controller_Template
 		
 		// Try to find the URL they're talking about
 		$url_pieces = parse_url($post['url']);
-		$url = Shortener::get_url(substr($url_pieces['path'], 1), $url_pieces['host']);
+		try
+		{
+			$url = Shortener::get_url(substr($url_pieces['path'], 1), $url_pieces['host']);
+		}
+		catch (Exception $ex)
+		{
+			// Use a dummy URL
+			$url = Model::factory('url');
+		}
 
 		// Is it a valid URL?
 		if ($url != false && $url->loaded())
@@ -264,8 +292,12 @@ Email: ' . $post['email'];
 URL ID: ' . $url . '
 Number of complaints: ' . $url->complaints;
 		}
+		
+		$headers = array('From: "zURL Abuse" <abuse@zurl.ws>');
+		if (!empty($post['email']))
+			$headers[] = 'Reply-To: ' . $post['email'];
 
-		mail('zurl@d15.biz', '[URL ' . $url->id . '] ' . $post['url'], $email, 'From: "zURL Abuse" <abuse@zurl.ws>');
+		mail('zurl@dan.cx', '[URL ' . $url->id . '] ' . $post['url'], $email, implode("\r\n", $headers), '-fabuse@zurl.ws');
 		
 		$page = $this->template->body = new View('url/complaint_received');
 	}

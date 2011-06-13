@@ -23,11 +23,11 @@ class Model_Url extends ORM
 		}
 		elseif ($name == 'short_url')
 		{
-			return self::get_short_url($this->id, $this->type, $this->custom_alias, $this->user_id, $this->domain_id);
+			return self::get_short_url($this->id, $this->type, $this->custom_alias, $this->user_id, $this->domain_id, $this->domain_url_id);
 		}
 		elseif ($name == 'preview_url')
 		{
-			return self::get_preview_url($this->id, $this->type, $this->custom_alias, $this->user_id, $this->domain_id);
+			return self::get_preview_url($this->id, $this->type, $this->custom_alias, $this->user_id, $this->domain_id, $this->domain_url_id);
 		}
 		
 		return parent::__get($name);
@@ -71,12 +71,27 @@ class Model_Url extends ORM
 				->find();
 	}
 	
-	public static function find_by_domain_custom($alias, $domain)
+	/**
+	 * Find a URL on a custom domain, either by custom alias, or "normal" alias.
+	 * @param	string	Alias in the URL
+	 * @param	int		Domain ID
+	 * @returns The URL, or null if not found
+	 */
+	public static function find_by_domain($alias, $domain)
 	{
 		return ORM::factory('url')
-			->where('type', '=', 'domain_custom')
 			->where('domain_id', '=', $domain)
-			->where('custom_alias', '=', $alias)
+			->and_where_open()
+				->or_where_open()
+					->where('type', '=', 'domain_custom')
+					->where('custom_alias', '=', $alias)
+				->or_where_close()
+				->or_where_open()
+					->where('type', '=', 'domain')
+					->where('domain_url_id', '=', Shortener::alias_to_id($alias))
+				->or_where_close()
+			->and_where_close()
+			->order_by('id')
 			->find();
 	}
 	
@@ -86,7 +101,7 @@ class Model_Url extends ORM
 	//public static function get_short_url($id)
 	// TODO: This is UUUUGLY!
 	///public static function get_short_url($row)
-	public static function get_short_url($id, $type, $custom_alias, $user_id, $domain_id = null)
+	public static function get_short_url($id, $type, $custom_alias, $user_id, $domain_id = null, $domain_url_id = null)
 	{		
 		if (strstr($_SERVER['HTTP_HOST'], 'dev.zurl'))
 			$base = 'dev.zurl.ws:82';
@@ -113,6 +128,11 @@ class Model_Url extends ORM
 				return 'http://' . $domain->domain . '/' . $custom_alias;
 				break;
 				
+			case 'domain':
+				$domain = ORM::factory('domain', $domain_id);
+				return 'http://' . $domain->domain . '/' . Shortener::id_to_alias($domain_url_id);
+				break;
+				
 			default:
 				return 'http://' . $base . '/' . Shortener::id_to_alias($id);
 				break;
@@ -123,7 +143,7 @@ class Model_Url extends ORM
 	 * Get the preview URL for a URL
 	 * TODO: Remove duplication with get_short_url above
 	 */
-	public static function get_preview_url($id, $type, $custom_alias, $user_id, $domain_id)
+	public static function get_preview_url($id, $type, $custom_alias, $user_id, $domain_id, $domain_url_id = null)
 	{
 		switch ($type)
 		{
@@ -139,6 +159,12 @@ class Model_Url extends ORM
 			case 'domain_custom':
 				$domain = ORM::factory('domain', $domain_id);
 				return 'http://' . $domain->domain . '/p/' . $custom_alias;
+				break;
+				
+			case 'domain':
+				$domain = ORM::factory('domain', $domain_id);
+				return 'http://' . $domain->domain . '/p/' . Shortener::id_to_alias($domain_url_id);
+				break;
 				
 			default:
 				return 'http://' . $_SERVER['HTTP_HOST'] . '/p/' . Shortener::id_to_alias($id);

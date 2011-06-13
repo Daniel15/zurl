@@ -79,7 +79,9 @@ class Shortener
 			if (!$domain->loaded())
 				throw new Exception('Domain ' . htmlspecialchars($hostname) . ' not found!');
 				
-			return Model_Url::find_by_domain_custom($alias, $domain);
+			// URL model handles differences between custom and standard aliases, so just pass the
+			// alias to it.
+			return Model_Url::find_by_domain($alias, $domain);
 		}
 	}
 }
