@@ -11,7 +11,7 @@
 			</p>
 			
 			<h2>Free Membership</h2>
-			<p>While the basic zURL shortening service can be used without creating an account, registering has a number of advantages, including <a href="about.htm#custom">custom URLs</a> and <a href="about.htm#hits">hit statistics</a></p>
+			<p>In order to use the zURL shortening service you must create an account, registering has a number of advantages, including <a href="about.htm#custom">custom URLs</a> and <a href="about.htm#hits">hit statistics</a></p>
 			
 			<h3 id="custom">Custom URLs</h3>
 			<p>

@@ -58,8 +58,8 @@ class Controller_Account extends Controller_Template
 	
 	public function action_register()
 	{
-		// If they're logged in, we don't want to go to this page!
-		if ($this->logged_in)
+		// If they're logged in or if we have registration disabled, we don't want to go to this page!
+		if ($this->logged_in || !Kohana::config('app.registration_allowed'))
 			Request::instance()->redirect('');
 			
 		$this->template->title = 'Register';
@@ -69,7 +69,6 @@ class Controller_Account extends Controller_Template
 		$page->errors = array();
 		$page->values = array('username' => '', 'email' => '');
 		
-		/* Shutdown Registration Temporarily
 		// Did the user post the form?
 		if ($_POST)
 		{
@@ -104,7 +103,7 @@ class Controller_Account extends Controller_Template
 			// Let's grab the errors
 			$page->errors = $user->validate()->errors('register');
 			$page->values = $user->validate();
-		}*/
+		}
 	}
 	
 	public function action_check_username()

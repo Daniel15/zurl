@@ -32,7 +32,7 @@ if (!empty($jsload))
 	<div id="header">
 		<div id="head_login">
 <?php if (!$logged_in): ?>
-			<p id="head_login_prompt">Not logged in. <a id="head_login_link" href="<?php echo URL::site('account/login'); ?>">Log in</a> or <a href="<?php echo URL::site('account/register'); ?>">register</a>.</p>
+			<p id="head_login_prompt">Not logged in. <a id="head_login_link" href="<?php echo URL::site('account/login'); ?>">Log in</a><?php if (Kohana::config('app.registration_allowed')): ?> or <a href="<?php echo URL::site('account/register'); ?>">register</a><?php endif; ?>.</p>
 			<form id="head_login_form" action="<?php echo URL::site('account/login'); ?>" method="post">
 				Log in: 
 				<fieldset>
@@ -54,7 +54,7 @@ if (!empty($jsload))
 		<!--li><a href="<?php echo URL::site('account/url'); ?>"><img src="res/icons/link.png" alt="URLs" width="16" height="16" /> My URLs</a></li-->
 		<li><a href="<?php echo URL::site('about.htm'); ?>"><img src="res/icons/book.png" alt="About" width="16" height="16" /> About zURL</a></li>
 		<li><a href="<?php echo URL::site('url/complaint'); ?>"><img src="res/icons/bomb.png" alt="Report Spam" width="16" height="16" /> Report a spam URL</a></li>
-<?php if (!$logged_in): ?>
+<?php if (!$logged_in && Kohana::config('app.registration_allowed')): ?>
 		<li><a href="<?php echo URL::site('account/register'); ?>"><img src="res/icons/user_add.png" alt="Register" width="16" height="16" /> Register</a></li>
 <?php endif; ?>
 	</ul>

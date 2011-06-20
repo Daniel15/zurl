@@ -5,23 +5,13 @@ Form::show_errors($errors);
 ?>
 
 			<?php echo form::open('url/shorten', array('id' => 'shorten')); ?>
-
-<?php 
-// Temporary hack until stricter spam management is in place!
-if (!$logged_in) : ?>
-Due to spam, users are now required to create an account to use zURL. Sorry for the inconvenience.
-<?php else: ?>
-			
-			
 				<p>					
 					<input type="hidden" name="token" value="<?php echo csrf::token(); ?>" />
 					<label for="url">Enter a long URL to make short:</label><br />
 					<input type="text" name="url" id="url" value="<?php echo htmlspecialchars($values['url']); ?>" />
 <?php if (empty($captcha)): ?>
 					<input type="submit" id="shorten" value="Shorten!" />
-<?php endif; ?>
 				</p>
-<?php if ($logged_in): ?>
 				<p>
 					Type (<a href="about.htm#custom">what?</a>): 
 					
@@ -37,9 +27,6 @@ Due to spam, users are now required to create an account to use zURL. Sorry for 
 				<p id="alias_p">
 					Short URL: http://<strong id="prefix"></strong>.zurl.ws/<input type="text" name="alias" id="alias" value="<?php echo !empty($values['alias']) ? htmlspecialchars($values['alias']) : ''; ?>" />
 				</p>
-<?php else: ?>
-				<input type="hidden" name="type" value="standard" />
-<?php endif; ?>
 				
 <?php if (!empty($captcha)): ?>
 				<p>

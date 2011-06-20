@@ -6,10 +6,6 @@ class Controller_Url extends Controller_Template
 	protected $internal_template = array('invalid');
 	protected $secure_actions = array('delete', 'stats');
 	
-	// Only allow [rate] URLs in [period] seconds before showing a CAPTCHA to guests
-	const RATE = 3;
-	const RATE_PERIOD = 60;
-	
 	public function action_index()
 	{
 		// Wrong domain? Redirect to the correct one.
@@ -21,12 +17,12 @@ class Controller_Url extends Controller_Template
 		// Load the news
 		//$this->template->sidebar = new View('includes/news');
 		
-		// Rest of the page.			
-		$page->shorten = Request::factory('url/shorten')->execute();
-		
-		// If we're logged in, we need our listing
+		// If we're logged in, we need our listing and the shortening form
 		if ($this->logged_in)
+		{
+			$page->shorten = Request::factory('url/shorten')->execute();
 			$page->account = Request::factory('account/urls')->execute()->response;
+		}
 	}
 	
 	public function action_shorten()
@@ -41,31 +37,21 @@ class Controller_Url extends Controller_Template
 			;
 		
 		// If they're logged in, they might have chosen a custom type
-		if ($this->logged_in)
+		$post->rule('type', 'Controller_Url::validate_type_member');
+	
+		if (in_array(Arr::get($_POST, 'type'), array('custom', 'user')))
 		{
-			$post->rule('type', 'Controller_Url::validate_type_member');
-		
-			if (in_array(Arr::get($_POST, 'type'), array('custom', 'user')))
-			{
-				$post
-					->rule('alias', 'not_empty')
-					->filter('alias', 'strtolower')
-					->rule('alias', 'regex', array('~^[a-z0-9\-_]+$~'));
-					
-				if ($_POST['type'] == 'custom')
-					$post->callback('alias', 'Controller_Url::custom_alias_available');
-			}
-		}
-		else
-		{
-			$post->rule('type', 'Controller_Url::validate_type_guest'); 
-			// If they've exceeded rate limits, CAPTCHAs ahoy
-			if (self::exceeded_rate_limit())
-				$post->callback('recaptcha_challenge_field', 'Recaptcha::validate');
+			$post
+				->rule('alias', 'not_empty')
+				->filter('alias', 'strtolower')
+				->rule('alias', 'regex', array('~^[a-z0-9\-_]+$~'));
+				
+			if ($_POST['type'] == 'custom')
+				$post->callback('alias', 'Controller_Url::custom_alias_available');
 		}
 			
 		// Haven't posted yet, or is it invalid?
-		if (!$post->check())
+		if (!$post->check() && $this->logged_in)
 		{
 			$this->template->title = $post['url'] != null ? 'Error shortening URL!' : 'Shorten URL';
 			$this->template->jsload = 'Shorten.init';
@@ -74,26 +60,20 @@ class Controller_Url extends Controller_Template
 			$page->shorten->errors = $post->errors('shorten');
 			$page->shorten->values = $post;
 			$this->session->set('passed_captcha', true);
-			
-			if (!$this->logged_in && self::exceeded_rate_limit())
-			{
-				$page->shorten->captcha = Recaptcha::get_html();
-			}
-
 			$page->shorten->logged_in = $this->logged_in;
 			return;
 		}
+
+		if (!$this->logged_in)
+			$this->request->redirect();
 		
 		// Check if we already have a shortened URL for this.
 		//$url = ORM::factory('url', array('url' => $post['url']));
 		$url = ORM::factory('url')
 			->where('url', '=', $post['url'])
-			->and_where('status', '=', 'ok');
-		if ($this->logged_in)
-		{
-			$url->and_where('user_id', '=', $this->user);
-			$url->and_where('type', '=', $post['type']);
-		}
+			->and_where('status', '=', 'ok')
+			->and_where('user_id', '=', $this->user)
+			->and_where('type', '=', $post['type']);
 		
 		$url->find();
 			
@@ -105,13 +85,10 @@ class Controller_Url extends Controller_Template
 			$url->created_date = time();
 			$url->created_ip = $_SERVER['REMOTE_ADDR'];
 			$url->created_ip2 = !empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : null;
-			if ($this->logged_in)
-			{
-				$url->user = $this->user;
-				$url->type = $post['type'];
-				if (in_array($url->type, array('custom', 'user')))
-					$url->custom_alias = $post['alias'];
-			}
+			$url->user = $this->user;
+			$url->type = $post['type'];
+			if (in_array($url->type, array('custom', 'user')))
+				$url->custom_alias = $post['alias'];
 				
 			$url->save();
 		}
@@ -120,12 +97,6 @@ class Controller_Url extends Controller_Template
 		$page->original = $url->url;
 		$page->shortened = $url->short_url;
 		$page->preview = $url->preview_url;
-		
-		/*$page->shorten = new View('includes/url/shorten');
-		if (!$this->logged_in)
-			$page->shorten->captcha = Recaptcha::get_html();
-		$page->shorten->logged_in = $this->logged_in;
-		$page->shorten->errors = array();*/
 		
 		// Clear out the POST data, so the internal request doesn't think we're POSTing again.
 		$_POST = array();
