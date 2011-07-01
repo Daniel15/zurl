@@ -55,7 +55,7 @@ if (!empty($jsload))
 		<li><a href="<?php echo URL::site('about.htm'); ?>"><img src="res/icons/book.png" alt="About" width="16" height="16" /> About zURL</a></li>
 		<li><a href="<?php echo URL::site('url/complaint'); ?>"><img src="res/icons/bomb.png" alt="Report Spam" width="16" height="16" /> Report a spam URL</a></li>
 <?php if (!$logged_in): ?>
-		<li><a href="<?php echo URL::site('account/register'); ?>"><img src="res/icons/user_add.png" alt="Register" width="16" height="16" /> Register</a></li>
+<?php if (Kohana::config('app.allow_registration')): ?>		<li><a href="<?php echo URL::site('account/register'); ?>"><img src="res/icons/user_add.png" alt="Register" width="16" height="16" /> Register</a></li><?php endif; ?>
 <?php endif; ?>
 	</ul>
 	<div id="container">
