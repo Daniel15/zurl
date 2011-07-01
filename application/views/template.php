@@ -32,7 +32,7 @@ if (!empty($jsload))
 	<div id="header">
 		<div id="head_login">
 <?php if (!$logged_in): ?>
-			<p id="head_login_prompt">Not logged in. <a id="head_login_link" href="<?php echo URL::site('account/login'); ?>">Log in</a> or <a href="<?php echo URL::site('account/register'); ?>">register</a>.</p>
+			<p id="head_login_prompt">Not logged in. <a id="head_login_link" href="<?php echo URL::site('account/login'); ?>">Log in</a><?php if(Kohana::config('app.allow_registration')): ?> or <a href="<?php echo URL::site('account/register'); ?>">register</a><?php endif; ?>.</p>
 			<form id="head_login_form" action="<?php echo URL::site('account/login'); ?>" method="post">
 				Log in: 
 				<fieldset>
