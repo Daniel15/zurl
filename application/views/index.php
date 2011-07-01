@@ -1,7 +1,6 @@
-<?php defined('SYSPATH') or die('No direct script access.'); ?>
-			<p>Welcome to zURL.ws! We provide a free URL shortener, to make your looooooong URLs short. Tired of sending around long, manageable URLs? Need to send a long URL by text message or post it on Twitter? By entering a URL in the box below, we'll create a short URL that will never expire.</p>
-
 <?php
+defined('SYSPATH') or die('No direct script access.');
+
 echo $shorten;
 
 // Are they logged in?

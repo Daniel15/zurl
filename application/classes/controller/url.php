@@ -20,9 +20,14 @@ class Controller_Url extends Controller_Template
 		$page = $this->template->body = View::factory('index');
 		// Load the news
 		//$this->template->sidebar = new View('includes/news');
-		
-		// Rest of the page.			
-		$page->shorten = Request::factory('url/shorten')->execute();
+
+		// If we are logged in, or if we allow guests to shorten
+		if ($this->logged_in || Kohana::config('app.allow_guest_urls'))
+		{		
+			$page->shorten = Request::factory('url/shorten')->execute();
+		} else {
+			$page->shorten = '';
+		}
 		
 		// If we're logged in, we need our listing
 		if ($this->logged_in)
@@ -337,8 +342,6 @@ Number of complaints: ' . $url->complaints;
 	 */
 	private static function exceeded_rate_limit()
 	{
-		return true; // Temporary, to prevent spam
-		
 		if (!Session::instance()->get('passed_captcha', false))
 			return true;
 			
