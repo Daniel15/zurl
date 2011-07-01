@@ -80,6 +80,9 @@ class Controller_Url extends Controller_Template
 		}
 		else
 		{
+			if (!Kohana::config('app.allow_guest_urls'))
+				$this->request->redirect('');
+			
 			$post->rule('type', 'Controller_Url::validate_type_guest'); 
 			// If they've exceeded rate limits, CAPTCHAs ahoy
 			if (self::exceeded_rate_limit())
