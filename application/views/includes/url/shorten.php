@@ -3,9 +3,6 @@ defined('SYSPATH') or die('No direct script access.');
 
 Form::show_errors($errors);
 ?>
-			<p>Welcome to zURL.ws! We provide a free URL shortener, to make your looooooong URLs short. Tired of sending around long, manageable URLs? Need to send a long URL by text message or post it on Twitter? By entering a URL in the box below, we'll create a short URL that will never expire.</p>
-
-
 			<?php echo form::open('url/shorten', array('id' => 'shorten')); ?>			
 				<p>					
 					<input type="hidden" name="token" value="<?php echo csrf::token(); ?>" />
