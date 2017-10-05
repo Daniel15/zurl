@@ -1,5 +1,7 @@
 <?php
 
+date_default_timezone_set('Australia/Melbourne');
+
 /**
  * The directory in which your application specific resources are located.
  * The application directory must contain the config/kohana.php file.
@@ -44,7 +46,7 @@ define('EXT', '.php');
  * When using a legacy application with PHP >= 5.3, it is recommended to disable
  * deprecated notices. Disable with: E_ALL & ~E_DEPRECATED
  */
-error_reporting(E_ALL | E_STRICT);
+error_reporting(E_ALL & ~E_DEPRECATED);
 
 /**
  * End of standard configuration! Changing any of the code below should only be

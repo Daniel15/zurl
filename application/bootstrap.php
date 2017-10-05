@@ -40,7 +40,7 @@ ini_set('unserialize_callback_func', 'spl_autoload_call');
 /**
  * Set the production status based on domain
  */
-define('IN_PRODUCTION', !in_array($_SERVER['HTTP_HOST'], array('dev.zurl.ws:82', 'customzurltest.local', 'customzurltest2.local')));
+define('IN_PRODUCTION', $_SERVER['HTTP_HOST'] != 'dev.zurl.ws:82');
 
 //-- Configuration and initialization -----------------------------------------
 
@@ -59,9 +59,9 @@ define('IN_PRODUCTION', !in_array($_SERVER['HTTP_HOST'], array('dev.zurl.ws:82',
  */
 Kohana::init(array
 (
-	'base_url' => 'http://dev.zurl.ws:82/',
+	'base_url' => 'http://zurl.ws/',
 	'index_file' => '',
-	'profiling' => !IN_PRODUCTION,
+	'profile' => !IN_PRODUCTION,
 	'caching' => IN_PRODUCTION,
 ));
 

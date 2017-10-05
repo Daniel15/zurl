@@ -12,6 +12,10 @@ class Controller_Url extends Controller_Template
 	
 	public function action_index()
 	{
+		if ($_SERVER['HTTP_HOST'] === 'dl.vc')
+		{
+			$this->request->redirect('http://dan.cx/');
+		}
 		// Wrong domain? Redirect to the correct one.
 		if (!in_array($_SERVER['HTTP_HOST'], array('zurl.ws', 'www.zurl.ws', 'dev.zurl.ws', 'dev.zurl.ws:82', 'staging.zurl.ws', 'pre.zurl.ws')))
 			$this->request->redirect('http://zurl.ws' . $_SERVER['REQUEST_URI']);
@@ -345,6 +349,8 @@ Number of complaints: ' . $url->complaints;
 	 */
 	private static function exceeded_rate_limit()
 	{
+		return true; // Temporary, to prevent spam
+		
 		if (!Session::instance()->get('passed_captcha', false))
 			return true;
 			

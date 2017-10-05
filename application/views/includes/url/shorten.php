@@ -3,7 +3,16 @@ defined('SYSPATH') or die('No direct script access.');
 
 Form::show_errors($errors);
 ?>
-			<?php echo form::open('url/shorten', array('id' => 'shorten')); ?>			
+
+			<?php echo form::open('url/shorten', array('id' => 'shorten')); ?>
+
+<?php 
+// Temporary hack until stricter spam management is in place!
+if (!$logged_in) : ?>
+Due to spam, users are now required to create an account to use zURL. Sorry for the inconvenience.
+<?php else: ?>
+			
+			
 				<p>					
 					<input type="hidden" name="token" value="<?php echo csrf::token(); ?>" />
 					<label for="url">Enter a long URL to make short:</label><br />
@@ -57,4 +66,5 @@ Form::show_errors($errors);
 					<input type="submit" id="shorten" value="Shorten!" />
 				</p>
 <?php endif; ?>
+<?php endif; // Spam notice ?>
 			</form>
