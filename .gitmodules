@@ -12,4 +12,4 @@
 	url = https://github.com/kohana/orm.git
 [submodule "modules/pagination"]
 	path = modules/pagination
-	url = https://github.com/kohana/pagination.git
+	url = https://github.com/Daniel15/kohana-pagination.git
