@@ -185,12 +185,12 @@ class Controller_Url extends Controller_Template
 		$this->template->jsload = 'Shortened.init';
 	}
 	
-	public function action_invalid($alias)
+	public function action_invalid($id)
 	{
 		$this->request->status = 404;
 		$this->template->title = 'URL not available';
 		//$url = Model_Url::find_by_alias($alias);
-		$url = Shortener::get_url($alias);
+		$url = Shortener::get_url($id);
 		$page = $this->template->body = new View('url/deleted');
 		
 		// Why's it not around?

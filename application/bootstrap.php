@@ -149,7 +149,7 @@ if (!IN_PRODUCTION || !Route::cache())
 			'action' => 'preview',
 		));
 		
-	Route::set('shortened_urls', '<url>')
+	Route::set('shortened_urls', '<alias>')
 		->defaults(array(
 			'controller' => 'url_goto',
 			'action' => 'go',
